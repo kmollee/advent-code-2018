@@ -20,7 +20,7 @@ func main() {
 	var d byte
 
 	for {
-		isReative := false
+		isReactive := false
 		for i := range polymers[:len(polymers)-1] {
 
 			if polymers[i] > polymers[i+1] {
@@ -31,11 +31,11 @@ func main() {
 
 			if d == 32 {
 				polymers = polymers[:i] + polymers[i+2:]
-				isReative = true
+				isReactive = true
 				break
 			}
 		}
-		if !isReative {
+		if !isReactive {
 			break
 		}
 	}

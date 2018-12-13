@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"strings"
 )
 
 func main() {
-	data, err := ioutil.ReadFile("../test.txt")
+	data, err := ioutil.ReadFile("../input.txt")
 	if err != nil {
 		log.Fatalf("could not read file: %v", err)
 	}
@@ -19,26 +20,37 @@ func main() {
 
 	var d byte
 
-	for {
-		isReative := false
-		for i := range polymers[:len(polymers)-1] {
+	shortestpoly := len(data)
+	var removeChar rune
 
-			if polymers[i] > polymers[i+1] {
-				d = polymers[i] - polymers[i+1]
-			} else {
-				d = polymers[i+1] - polymers[i]
+	for c := 'A'; c <= 'Z'; c++ {
+		newpolymers := strings.Replace(polymers, string(c), "", -1)
+		newpolymers = strings.Replace(newpolymers, string(c+32), "", -1)
+		for {
+			isReactive := false
+			for i := range newpolymers[:len(newpolymers)-1] {
+
+				if newpolymers[i] > newpolymers[i+1] {
+					d = newpolymers[i] - newpolymers[i+1]
+				} else {
+					d = newpolymers[i+1] - newpolymers[i]
+				}
+
+				if d == 32 {
+					newpolymers = newpolymers[:i] + newpolymers[i+2:]
+					isReactive = true
+					break
+				}
 			}
-
-			if d == 32 {
-				polymers = polymers[:i] + polymers[i+2:]
-				isReative = true
+			if !isReactive {
 				break
 			}
 		}
-		if !isReative {
-			break
+		if len(newpolymers) < shortestpoly {
+			shortestpoly = len(newpolymers)
+			removeChar = c
 		}
 	}
 
-	fmt.Println(len(polymers))
+	fmt.Println(shortestpoly, string(removeChar))
 }
