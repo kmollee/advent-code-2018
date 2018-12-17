@@ -12,33 +12,30 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not read file: %v", err)
 	}
-
 	data = bytes.TrimSuffix(data, []byte("\n"))
+	r := react(string(data))
+	fmt.Println(len(r))
+}
 
-	polymers := string(data)
+func react(s string) string {
+	ok := true
 
-	var d byte
+	for ok {
+		s, ok = step(s)
+	}
+	return s
+}
 
-	for {
-		isReactive := false
-		for i := range polymers[:len(polymers)-1] {
-
-			if polymers[i] > polymers[i+1] {
-				d = polymers[i] - polymers[i+1]
-			} else {
-				d = polymers[i+1] - polymers[i]
-			}
-
-			if d == 32 {
-				polymers = polymers[:i] + polymers[i+2:]
-				isReactive = true
-				break
-			}
-		}
-		if !isReactive {
-			break
+func step(s string) (string, bool) {
+	for i := 0; i < len(s)-1; i++ {
+		if opposite(s[i], s[i+1]) {
+			return s[:i] + s[i+2:], true
 		}
 	}
+	return s, false
+}
 
-	fmt.Println(len(polymers))
+func opposite(a, b byte) bool {
+	const diff = 'a' - 'A'
+	return a+diff == b || b+diff == a
 }
